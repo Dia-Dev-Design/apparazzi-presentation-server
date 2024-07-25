@@ -19,6 +19,7 @@ const userSchema = new Schema(
       default: 'https://cvhrma.org/wp-content/uploads/2015/07/default-profile-photo.jpg'
     },
     location: String,
+    phoneNumber: String
   },
   {
     timestamps: true,

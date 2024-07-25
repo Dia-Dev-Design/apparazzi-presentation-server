@@ -8,39 +8,36 @@ const cloudinary = require("../middleware/cloudinary");
 const upload = require("../middleware/multer");
 const isAuthenticated = require("../middleware/isAuthenticated");
 
-router.post('/image-upload', upload.single("image"), (req, res, next) => {
-  
+router.post("/image-upload", upload.single("image"), (req, res, next) => {
   if (!req.file) {
     next(new Error("No file uploaded!"));
     return;
   }
-  console.log("this is file", req.file)
+  console.log("this is file", req.file);
   res.json({ image: req.file.path });
-  
-})
-
+});
 
 router.post(
   "/new-photo",
   isAuthenticated,
   upload.single("imageUrl"),
   async (req, res) => {
-    console.log("Reached new-photo route", req.file.path)
+    console.log("Reached new-photo route", req.file.path);
     try {
       const result = await cloudinary.uploader.upload(req.file.path, {
         image_metadata: true,
       });
 
-      let alternateUrl
+      let alternateUrl;
 
-      if (result.secure_url.split('.')[3] === 'heic') {
-        console.log("WE have an HEIC FILE!!!!!")
+      if (result.secure_url.split(".")[3] === "heic") {
+        console.log("WE have an HEIC FILE!!!!!");
         const newResult = await cloudinary.uploader.upload(req.file.path, {
           image_metadata: true,
-          format: "jpg"
+          format: "jpg",
         });
 
-        alternateUrl = newResult.secure_url
+        alternateUrl = newResult.secure_url;
       }
 
       Photo.create({
@@ -61,7 +58,7 @@ router.post(
           console.log(`Error while creating a new photo: ${error}`)
         );
     } catch (err) {
-      console.log({errorMessage: "Error posting photo", err});
+      console.log({ errorMessage: "Error posting photo", err });
     }
   }
 );
@@ -85,6 +82,7 @@ router.get("/all-photos", (req, res) => {
     .populate({
       path: "contributor",
     })
+    .sort({ createdAt: -1 })
     .then((photosFromDB) => {
       res.json({ photos: photosFromDB });
     })
@@ -107,7 +105,7 @@ router.get("/:id/tag", (req, res) => {
 });
 
 router.get("/:id/user-photos", (req, res) => {
-  Photo.find({contributor: req.params.id})
+  Photo.find({ contributor: req.params.id })
     .then((photosFromDB) => {
       res.json({ photos: photosFromDB });
     })
