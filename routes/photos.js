@@ -7,6 +7,7 @@ const User = require("../models/User");
 const cloudinary = require("../middleware/cloudinary");
 const upload = require("../middleware/multer");
 const isAuthenticated = require("../middleware/isAuthenticated");
+const isPhotoOwner = require('../middleware/isPhotoOwner')
 
 router.post("/image-upload", upload.single("image"), (req, res, next) => {
   if (!req.file) {
@@ -91,8 +92,10 @@ router.get("/all-photos", (req, res) => {
     );
 });
 
-router.get("/:id/tag", (req, res) => {
-  Photo.find({ tags: { $in: [`${req.params.id}`] } })
+router.get("/:thisTag/tag", (req, res) => {
+  console.log("Hiiting this route, line 96 *****************", req.params)
+  const { thisTag } = req.params
+  Photo.find({ tags: { $in: [`${thisTag}`] } })
     .populate({
       path: "contributor",
     })
@@ -116,16 +119,16 @@ router.get("/:id/user-photos", (req, res) => {
 
 router.get("/:id/contributor", (req, res, next) => {
   User.findById(req.params.id)
-    .then(function (foundUser) {
+    .then((foundUser) => {
       Photo.find({ contributor: req.params.id })
         .populate({
           path: "contributor",
         })
-        .then(function (foundPhotos) {
+        .then((foundPhotos) => {
           res.json({ foundUser: foundUser, foundPhotos: foundPhotos });
         });
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log(error);
     });
 });
@@ -148,24 +151,24 @@ router.get("/:id/details", (req, res, next) => {
     });
 });
 
-router.post("/:id/delete", (req, res, next) => {
-  Photo.findByIdAndRemove(req.params.id)
-    .then(function () {
+router.post("/:id/delete", isAuthenticated, isPhotoOwner, (req, res, next) => {
+  Photo.findByIdAndDelete(req.params.id)
+    .then(() => {
       res.json({ message: "photo deleted" });
     })
-    .catch(function (error) {
+    .catch((error) => {
       res.json(error);
     });
 });
 
-router.post("/:id/edit", (req, res, next) => {
-  Photo.findByIdAndUpdate(req.params.id, { ...req.body })
-    .then(function () {
-      res.json({ message: "updated" });
-    })
-    .catch(function (error) {
-      res.json(error);
-    });
-});
+// router.post("/:id/edit", (req, res, next) => {
+//   Photo.findByIdAndUpdate(req.params.id, { ...req.body })
+//     .then(() => {
+//       res.json({ message: "updated" });
+//     })
+//     .catch(function (error) {
+//       res.json(error);
+//     });
+// });
 
 module.exports = router;

@@ -11,7 +11,6 @@ const photoSchema = new Schema(
     longitude: String,
     photographedDate: String,
     contributor: { type: Schema.Types.ObjectId, ref: "User", required: true },
-
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
   },
   {

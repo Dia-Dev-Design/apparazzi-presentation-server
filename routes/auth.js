@@ -16,12 +16,12 @@ router.post("/signup", (req, res, next) => {
 
   // Check if the email or password or name is provided as an empty string
   if (!email || !password || !username) {
-    res.status(401).json({ message: "Provide all fields: Email, Password, and Name" });
+    res.status(401).json({ message: "Please provide all fields: Email, Password, and Name" });
     return;
   }
 
   if (username.length < 4) {
-    res.status(401).json({ message: "Please provide a Username must be at least 4 characters long." });
+    res.status(401).json({ message: "Please provide a Username that is at least 4 characters long." });
     return;
   }
 
@@ -33,7 +33,7 @@ router.post("/signup", (req, res, next) => {
   }
 
   if (password.length < 6) {
-    res.status(401).json({ message: "Please provirde a Password that is at least 6 characters long." });
+    res.status(401).json({ message: "Please provide a Password that is at least 6 characters long." });
     return;
   }
   // Use regex to validate the password format
