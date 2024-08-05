@@ -9,13 +9,36 @@ const upload = require("../middleware/multer");
 const isAuthenticated = require("../middleware/isAuthenticated");
 const isPhotoOwner = require('../middleware/isPhotoOwner')
 
-router.post("/image-upload", upload.single("image"), (req, res, next) => {
-  if (!req.file) {
-    next(new Error("No file uploaded!"));
-    return;
+router.post("/image-upload", upload.single("image"), async (req, res, next) => {
+
+  try {
+    if (!req.file) {
+      next(new Error("No file uploaded!"));
+      return;
+    }
+  
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      image_metadata: true,
+    });
+
+    let alternateUrl;
+
+    if (result.secure_url.split(".")[3] === "heic") {
+      console.log("WE have an HEIC FILE!!!!!");
+      const newResult = await cloudinary.uploader.upload(req.file.path, {
+        image_metadata: true,
+        format: "jpg",
+      });
+
+      alternateUrl = newResult.secure_url;
+    }
+      console.log("this is file", result.secure_url, alternateUrl);
+      res.json({ image: alternateUrl || result.secure_url });
+    
+  } catch (error) {
+    console.log("Error creating photo====>", error)
   }
-  console.log("this is file", req.file);
-  res.json({ image: req.file.path });
+
 });
 
 router.post(

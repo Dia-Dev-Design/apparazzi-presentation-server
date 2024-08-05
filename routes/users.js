@@ -38,10 +38,40 @@ router.post(
 
 router.post("/edit-profile-without-picture", isAuthenticated, (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { ...req.body }, { new: true })
-    .then(function (updatedProfile) {
-      res.json(updatedProfile);
+    .then((updatedProfile) => {
+      const {
+        username,
+        email,
+        name,
+        bio,
+        imageUrl,
+        location,
+        createdAt,
+        _id,
+      } = updatedProfile;
+
+      // Create a new object that doesn't expose the password
+      const payload = {
+        username,
+        email,
+        name,
+        bio,
+        imageUrl,
+        location,
+        createdAt,
+        _id,
+      };
+
+      // Send a json response containing the user object
+      const authToken = jwt.sign(payload, process.env.SECRET, {
+        algorithm: "HS256",
+        expiresIn: "1h",
+      });
+
+      // Send the token as the response
+      res.status(200).json({ authToken });
     })
-    .catch(function (error) {
+    .catch((error) => {
       res.json(error);
     });
 });
