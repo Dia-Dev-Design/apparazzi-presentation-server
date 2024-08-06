@@ -80,18 +80,14 @@ router.get("/my-profile", isAuthenticated, (req, res, next) => {
 
   User.findById(req.user._id)
     .then((foundUser) => {
-
-      console.log("This is line 58 =====>", foundUser, req.user)
-
       Photo.find({ contributor: foundUser._id })
         .populate("contributor")
         .sort({createdAt: -1})
         .then((foundPhotos) => {
-          console.log("This is line 58 =====>", foundPhotos)
           res.json(foundPhotos);
         });
     })
-    .catch(function (error) {
+    .catch((error) => {
       console.log(error);
     });
 });

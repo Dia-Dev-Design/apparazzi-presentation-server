@@ -75,8 +75,8 @@ router.post(
         photographedDate: result.image_metadata.CreateDate,
         contributor: req.user._id,
       })
-        .then((newlyCreatedPhotoFromDB) => {
-          res.json({ newlyCreatedPhotoFromDB });
+        .then((newPhoto) => {
+          res.json(newPhoto);
         })
         .catch((error) =>
           console.log(`Error while creating a new photo: ${error}`)
@@ -88,15 +88,20 @@ router.post(
 );
 
 router.post("/:id/add-after", isAuthenticated, (req, res, next) => {
-  Photo.findByIdAndUpdate(req.params.id, {
+  console.log("We are on line 91, this is req.bod ========y", req.body)
+  Photo.findByIdAndUpdate(req.params.id, 
+    {
     description: req.body.description,
     tags: req.body.tags,
-  })
+    },
+    {new: true}
+  )
 
-    .then(function (updatedPhoto) {
+    .then((updatedPhoto) => {
+      console.log("this is the photo after submission", updatedPhoto)
       res.json(updatedPhoto);
     })
-    .catch(function (error) {
+    .catch((error) => {
       res.json(error);
     });
 });
@@ -116,7 +121,6 @@ router.get("/all-photos", (req, res) => {
 });
 
 router.get("/:thisTag/tag", (req, res) => {
-  console.log("Hiiting this route, line 96 *****************", req.params)
   const { thisTag } = req.params
   Photo.find({ tags: { $in: [`${thisTag}`] } })
     .populate({

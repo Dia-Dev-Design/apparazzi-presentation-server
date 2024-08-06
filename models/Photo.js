@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 const photoSchema = new Schema(
   {
     description: String,
-    tags: Array,
+    tags: [String],
     postDate: String,
     imageUrl: String,
     cloudinary_id: String,
