@@ -53,6 +53,10 @@ router.post(
       });
 
       let alternateUrl;
+      let altLat
+      let altLong
+
+
 
       if (result.secure_url.split(".")[3] === "heic") {
         console.log("WE have an HEIC FILE!!!!!");
@@ -60,6 +64,8 @@ router.post(
           image_metadata: true,
           format: "jpg",
         });
+
+
 
         alternateUrl = newResult.secure_url;
       }
@@ -93,6 +99,9 @@ router.post("/:id/add-after", isAuthenticated, (req, res, next) => {
     {
     description: req.body.description,
     tags: req.body.tags,
+    latitude: req.body.latitude,
+    longitude: req.body.longitude,
+    photographedDate: req.body.photographedDate
     },
     {new: true}
   )
