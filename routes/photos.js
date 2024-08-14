@@ -207,4 +207,6 @@ router.post("/:id/delete", isAuthenticated, isPhotoOwner, (req, res, next) => {
 //     });
 // });
 
+
+
 module.exports = router;
