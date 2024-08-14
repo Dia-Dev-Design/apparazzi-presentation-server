@@ -129,7 +129,7 @@ router.post("/login", (req, res, next) => {
     .then((foundUser) => {
       if (!foundUser) {
         // If the user is not found, send an error response
-        res.status(401).json({ message: "User or password is incorrect." });
+        res.status(401).json({ message: "Incorrect username or password" });
         return;
       }
 
@@ -170,10 +170,10 @@ router.post("/login", (req, res, next) => {
         // Send the token as the response
         res.status(200).json({ authToken });
       } else {
-        res.status(401).json({ message: "Unable to authenticate the user" });
+        res.status(401).json({ message: "Incorrect username or password" });
       }
     })
-    .catch((err) => res.status(500).json({ message: "Internal Server Error" }));
+    .catch((err) => res.status(500).json({ message: "Incorrect username or password" }));
 });
 
 router.get("/verify", isAuthenticated, (req, res, next) => {
